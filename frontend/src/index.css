@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "rentride";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #eff6ff;
+
+  /* Text */
+  --color-base-content: #1e3a8a;
+
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-content: #ffffff;
+
+  /* Secondary */
+  --color-secondary: #3b82f6;
+  --color-secondary-content: #ffffff;
+
+  /* Accent */
+  --color-accent: #60a5fa;
+  --color-accent-content: #ffffff;
+
+  /* Neutral */
+  --color-neutral: #1d4ed8;
+  --color-neutral-content: #ffffff;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-warning: #facc15;
+  --color-error: #dc2626;
+}
