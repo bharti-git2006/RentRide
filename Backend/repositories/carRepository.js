@@ -93,19 +93,14 @@ export const updateAvailability = async (
 };
 
 export const getPopularCars = async () => {
-
     return await Car.find({
-        isActive: true,
-        isAvailable: true,
-    }).sort({ createdAt: -1 }).limit(2); //based on no. of bookings, right now placeholder logic
+        isActive: true
+    }).sort({ bookingCount: -1}).limit(3).populate("owner", "name");
 
 };
 
 export const getRecommendedCars = async () => {
 
     return await Car.find({
-        isActive: true,
-        isAvailable: true,
-    }).sort({ pricePerDay: 1 }).limit(2); //placeholder logic-> cheapest cars
-
-};
+        isActive: true
+    }).sort({bookingCount: -1, pricePerDay: 1 }).limit(3).populate("owner", "name");};

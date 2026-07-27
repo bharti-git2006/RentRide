@@ -9,6 +9,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import carRoutes from "./routes/carRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/cars", carRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
