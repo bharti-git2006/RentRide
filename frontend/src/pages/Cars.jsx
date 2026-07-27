@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import CarCard from "../components/CarCard";
+import Map from "../components/Map";
 
-const BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 async function get(path, params) {
   const query = params
     ? `?${new URLSearchParams(
-        Object.fromEntries(
-          Object.entries(params).filter(([, value]) => value)
-        )
+        Object.fromEntries(Object.entries(params).filter(([, value]) => value)),
       ).toString()}`
     : "";
 
@@ -24,7 +22,6 @@ async function get(path, params) {
   return data.data;
 }
 
-// Matches the "category" enum on the backend Car model
 const types = ["Hatchback", "Sedan", "SUV", "Luxury", "Sports"];
 
 const Cars = () => {
@@ -66,14 +63,10 @@ const Cars = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-
-      <h1 className="text-3xl font-bold mb-6">
-        Browse Cars
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Browse Cars</h1>
 
       {/* Filters */}
       <div className="flex gap-4 mb-6">
-
         <input
           type="text"
           placeholder="Location"
@@ -95,7 +88,11 @@ const Cars = () => {
             </option>
           ))}
         </select>
+      </div>
 
+      {/* Map Prototype */}
+      <div className="mb-8">
+        <Map cars={cars} />
       </div>
 
       {/* Cars */}
@@ -108,7 +105,6 @@ const Cars = () => {
           ))}
         </div>
       )}
-
     </div>
   );
 };
