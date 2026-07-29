@@ -1,8 +1,8 @@
-import {  createCar,  findCarById,  findCarByRegistrationNumber,  getAllCars,  updateCar,  softDeleteCar,  updateAvailability,  getPopularCars,  getRecommendedCars,  getOwnerCars } from "../repositories/carRepository.js";
+import { createCar, findCarById, findCarByRegistrationNumber, getAllCars, updateCar, softDeleteCar, updateAvailability, getPopularCars, getRecommendedCars, getOwnerCars, getPendingCars,updateCarApproval
+} from "../repositories/carRepository.js";
 
-export const addCar = async (carData, ownerId) => {
-
-  if (user.role !== "admin" && user.role !== "owner") {
+export const addCar = async (carData, user) => {
+  if (user.role !== "admin" &&  user.role !== "owner") {
     throw new Error("You are not allowed to edit cars.");
   }
   const existingCar = await findCarByRegistrationNumber(
@@ -17,14 +17,21 @@ export const addCar = async (carData, ownerId) => {
     throw new Error("No -ve fields allowed.");
   }
 
-  carData.owner = ownerId;
+  carData.owner = user.id;
+  carData.approvalStatus = "Pending";
+  carData.isActive = false;
+
+  return await createCar(carData);
 
   return await createCar(carData);
 };
 
 export const getCars = async (query) => {
   //for all users
-  const filters = { isActive: true };
+  const filters = {
+    isActive: true,
+    approvalStatus: "Approved",
+  };
 
   if (query.brand) {
     filters.brand = {
@@ -69,7 +76,7 @@ export const getCars = async (query) => {
 export const getCar = async (carId) => {
   const car = await findCarById(carId);
 
-  if (!car || !car.isActive) {
+  if (!car || !car.isActive || car.approvalStatus !== "Approved") {
     throw new Error("Car not found.");
   }
 
@@ -140,7 +147,8 @@ export const fetchRecommendedCars = async () => {
   return await getRecommendedCars();
 };
 
-export const ownerCars = async (user) => {  //owner(admin,lender) access to to get cars
+export const ownerCars = async (user) => {
+  //owner(admin,lender) access to to get cars
   if (user.role === "admin") {
     return await getAllCars({
       isActive: true,
@@ -152,4 +160,31 @@ export const ownerCars = async (user) => {  //owner(admin,lender) access to to g
   }
 
   throw new Error("Access denied.");
+};
+
+export const pendingCars = async (user) => {
+  return await getPendingCars();
+};
+
+export const reviewCar = async (
+  carId,
+  approvalStatus,
+  rejectionReason,
+  user
+) => {
+  const car = await findCarById(carId);
+
+  if (!car) {
+    throw new Error("Car not found.");
+  }
+
+  if (!["Approved", "Rejected"].includes(approvalStatus)) {
+    throw new Error("Invalid approval status.");
+  }
+
+  return await updateCarApproval(
+    carId,
+    approvalStatus,
+    rejectionReason
+  );
 };

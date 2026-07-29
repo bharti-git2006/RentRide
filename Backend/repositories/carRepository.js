@@ -9,7 +9,7 @@ export const findCarById = async (carId) => {
 };
 
 export const findCarByRegistrationNumber = async (registrationNumber) => {
-  return await Car.findOne({registrationNumber});
+  return await Car.findOne({ registrationNumber });
 };
 
 export const getAllCars = async (filters) => {
@@ -59,16 +59,22 @@ export const updateAvailability = async (carId, isAvailable) => {
 
 export const getPopularCars = async () => {
   return await Car.find({
-    isActive: true
+    isActive: true,
+    approvalStatus: "Approved",
   })
-    .sort({ bookingCount: -1 }) .limit(6) .populate("owner", "name");
+    .sort({ bookingCount: -1 })
+    .limit(6)
+    .populate("owner", "name");
 };
 
 export const getRecommendedCars = async () => {
   return await Car.find({
-    isActive: true
+    isActive: true,
+    approvalStatus: "Approved",
   })
-    .sort({ rating: -1, bookingCount: -1 }) .limit(6) .populate("owner", "name");
+    .sort({ rating: -1, bookingCount: -1 })
+    .limit(6)
+    .populate("owner", "name");
 };
 
 export const getOwnerCars = async (ownerId) => {
@@ -76,4 +82,29 @@ export const getOwnerCars = async (ownerId) => {
     owner: ownerId,
     isActive: true,
   });
+};
+
+export const getPendingCars = async () => {
+  return await Car.find({
+    approvalStatus: "Pending",
+  }).populate("owner", "name email");
+};
+
+export const updateCarApproval = async (
+  carId,
+  approvalStatus,
+  rejectionReason = "",
+) => {
+  return await Car.findByIdAndUpdate(
+    carId,
+    {
+      approvalStatus,
+      rejectionReason,
+      isActive: approvalStatus === "Approved",
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 };
