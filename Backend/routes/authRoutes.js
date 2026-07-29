@@ -12,14 +12,9 @@ router.post("/signup", signupUser);
 router.post("/login", loginUser);
 
 // Customer Routes
-router.patch("/apply-owner", authMiddleware, applyOwner);
+// router.put("/apply-owner", authMiddleware, applyOwner);
 
-// Admin Routes
-router.patch(
-    "/approve-owner/:id",
-    authMiddleware,
-    adminMiddleware,
-    approveOwnerRequest
-);
+// // Admin Routes
+// router.put( "/approve-owner/:id", authMiddleware, adminMiddleware, approveOwnerRequest);
 
 export default router;

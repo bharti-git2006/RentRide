@@ -1,98 +1,93 @@
 import {
-    getProfile,
-    updateProfile,
-    changePassword,
-    changeProfilePhoto
+  getProfile,
+  updateProfile,
+  changePassword,
+  changeProfilePhoto,
+  becomeOwner,
 } from "../services/profileService.js";
 
 export const getUserProfile = async (req, res) => {
-    try {
+  try {
+    const user = await getProfile(req.user.id);
 
-        const user = await getProfile(req.user.id);
-
-        res.status(200).json({
-            success: true,
-            message: "Profile fetched successfully.",
-            data: user
-        });
-
-    } catch (error) {
-
-        res.status(404).json({
-            success: false,
-            message: error.message
-        });
-
-    }
+    res.status(200).json({
+      success: true,
+      message: "Profile fetched successfully.",
+      data: user,
+    });
+  } catch (error) {
+    res.status(404).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 export const updateUserProfile = async (req, res) => {
-    try {
+  try {
+    const updatedProfile = await updateProfile(req.user.id, req.body);
 
-        const updatedProfile = await updateProfile(req.user.id, req.body);
-
-        res.status(200).json({
-            success: true,
-            message: "Profile updated successfully.",
-            data: updatedProfile
-        });
-
-    } catch (error) {
-
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-
-    }
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully.",
+      data: updatedProfile,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 export const changedPassword = async (req, res) => {
-    try {
+  try {
+    const { oldPassword, newPassword } = req.body;
 
-        const { oldPassword, newPassword } = req.body;
+    await changePassword(req.user.id, oldPassword, newPassword);
 
-        await changePassword(
-            req.user.id,
-            oldPassword,
-            newPassword
-        );
-
-        res.status(200).json({
-            success: true,
-            message: "Password changed successfully."
-        });
-
-    } catch (error) {
-
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-
-    }
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully.",
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 export const updateProfilePhoto = async (req, res) => {
-    try {
+  try {
+    const updatedProfile = await changeProfilePhoto(req.user.id, req.file.path);
 
-        const updatedProfile = await changeProfilePhoto(
-            req.user.id,
-            req.file.path
-        );
+    res.status(200).json({
+      success: true,
+      message: "Profile photo updated successfully.",
+      data: updatedProfile,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-        res.status(200).json({
-            success: true,
-            message: "Profile photo updated successfully.",
-            data: updatedProfile
-        });
+export const applyForOwner = async (req, res) => {
+  try {
+    const updatedUser = await becomeOwner(req.user.id);
+    res.status(200).json({
+      success: true,
+      message: "Owner application submitted successfully.",
+      data: updatedUser
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
 
-    } catch (error) {
-
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-
-    }
+      message: error.message,
+    });
+  }
 };

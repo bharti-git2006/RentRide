@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-const User = mongoose.model("User", userSchema);
+// const User = mongoose.model("User", userSchema);
+export const User = mongoose.models.User || mongoose.model('User', userSchema); // to avoid OverWriteModelError bug
 
 export default User;

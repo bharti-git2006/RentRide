@@ -1,233 +1,267 @@
-import { addCar, getCars, getCar, editCar, deleteCar, changeAvailability, fetchPopularCars,fetchRecommendedCars} from "../services/carService.js";
+import {
+  addCar,
+  getCars,
+  getCar,
+  editCar,
+  deleteCar,
+  changeAvailability,
+  fetchPopularCars,
+  fetchRecommendedCars,
+  ownerCars
+} from "../services/carService.js";
 
 
+// CREATE CAR
 export const createCar = async (req, res) => {
+  try {
 
-    try {
+    const carData = req.body;
 
-        const carData = req.body;
+    const ownerId = req.user.id;
 
-        if (req.files && req.files.length > 0) {
+    const car = await addCar(
+      carData,
+      ownerId
+    );
 
-            carData.images = req.files.map(
-                (file) => file.path
-            );
+    res.status(201).json({
+      success: true,
+      message: "Car added successfully",
+      car
+    });
 
-        }
+  } catch (error) {
 
-        const newCar = await addCar(
-            carData,
-            req.user.id
-        );
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
 
-        res.status(201).json({
-            success: true,
-            message: "Car added successfully.",
-            data: newCar
-        });
-
-    } catch (error) {
-
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-
-    }
-
+  }
 };
 
 
-
+// GET ALL CARS
 export const getAllCars = async (req, res) => {
+  try {
 
-    try {
+    const cars = await getCars(req.query);
 
-        const cars = await getCars(
-            req.query
-        );
+    res.status(200).json({
+      success: true,
+      cars
+    });
 
-        res.status(200).json({
-            success: true,
-            data: cars
-        });
+  } catch (error) {
 
-    } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
 
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-
-    }
-
+  }
 };
 
 
-
+// GET SINGLE CAR
 export const getCarById = async (req, res) => {
+  try {
 
-    try {
+    const carId = req.params.id;
 
-        const car = await getCar(
-            req.params.id
-        );
+    const car = await getCar(carId);
 
-        res.status(200).json({
-            success: true,
-            data: car
-        });
+    res.status(200).json({
+      success: true,
+      car
+    });
 
-    } catch (error) {
+  } catch (error) {
 
-        res.status(404).json({
-            success: false,
-            message: error.message
-        });
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
 
-    }
-
+  }
 };
 
 
-
+// UPDATE CAR
 export const updateCar = async (req, res) => {
+  try {
 
-    try {
+    const carId = req.params.id;
 
-        const updatedData = req.body;
+    const updatedData = req.body;
 
-        if (req.files && req.files.length > 0) {
+    const user = req.user;
 
-            updatedData.images = req.files.map(
-                (file) => file.path
-            );
 
-        }
+    const car = await editCar(
+      carId,
+      updatedData,
+      user
+    );
 
-        const updatedCar = await editCar(
-            req.params.id,
-            updatedData
-        );
 
-        res.status(200).json({
-            success: true,
-            message: "Car updated successfully.",
-            data: updatedCar
-        });
+    res.status(200).json({
+      success: true,
+      message: "Car updated successfully",
+      car
+    });
 
-    } catch (error) {
 
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+  } catch (error) {
 
-    }
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
 
+  }
 };
 
 
 
+// DELETE CAR
 export const removeCar = async (req, res) => {
+  try {
 
-    try {
+    const carId = req.params.id;
 
-        await deleteCar(
-            req.params.id
-        );
+    const user = req.user;
 
-        res.status(200).json({
-            success: true,
-            message: "Car deleted successfully."
-        });
 
-    } catch (error) {
+    await deleteCar(
+      carId,
+      user
+    );
 
-        res.status(404).json({
-            success: false,
-            message: error.message
-        });
 
-    }
+    res.status(200).json({
+      success: true,
+      message: "Car deleted successfully"
+    });
 
+
+  } catch (error) {
+
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+
+  }
 };
 
 
 
+// UPDATE AVAILABILITY
 export const updateAvailabilityStatus = async (req, res) => {
+  try {
 
-    try {
+    const carId = req.params.id;
 
-        const { isAvailable } = req.body;
+    const { isAvailable } = req.body;
 
-        const updatedCar =
-            await changeAvailability(
-                req.params.id,
-                isAvailable
-            );
+    const user = req.user;
 
-        res.status(200).json({
-            success: true,
-            message: "Availability updated successfully.",
-            data: updatedCar
-        });
 
-    } catch (error) {
+    const car = await changeAvailability(
+      carId,
+      isAvailable,
+      user
+    );
 
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
 
-    }
+    res.status(200).json({
+      success: true,
+      message: "Availability updated",
+      car
+    });
 
-};
 
-export const popularCars = async (req, res) => {
+  } catch(error){
 
-    try {
+    res.status(400).json({
+      success:false,
+      message:error.message
+    });
 
-        const cars =
-            await fetchPopularCars();
-
-        res.status(200).json({
-            success: true,
-            data: cars
-        });
-
-    } catch (error) {
-
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-
-    }
-
+  }
 };
 
 
 
-export const recommendedCars = async (req, res) => {
+// POPULAR CARS
+export const popularCars = async (req,res)=>{
+  try{
 
-    try {
+    const cars = await fetchPopularCars();
 
-        const cars =
-            await fetchRecommendedCars();
+    res.status(200).json({
+      success:true,
+      cars
+    });
 
-        res.status(200).json({
-            success: true,
-            data: cars
-        });
+  }catch(error){
 
-    } catch (error) {
+    res.status(400).json({
+      success:false,
+      message:error.message
+    });
 
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
+  }
+};
 
-    }
 
+
+// RECOMMENDED CARS
+export const recommendedCars = async(req,res)=>{
+  try{
+
+    const cars = await fetchRecommendedCars();
+
+    res.status(200).json({
+      success:true,
+      cars
+    });
+
+  }catch(error){
+
+    res.status(400).json({
+      success:false,
+      message:error.message
+    });
+
+  }
+};
+
+
+
+// OWNER / ADMIN CAR DASHBOARD
+export const getOwnerCars = async(req,res)=>{
+  try{
+
+    const user = req.user;
+
+
+    const cars = await ownerCars(user);
+
+
+    res.status(200).json({
+      success:true,
+      cars
+    });
+
+
+  }catch(error){
+
+    res.status(403).json({
+      success:false,
+      message:error.message
+    });
+
+  }
 };

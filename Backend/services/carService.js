@@ -1,208 +1,165 @@
-import { createCar, findCarById, findCarByRegistrationNumber, getAllCars, updateCar, softDeleteCar, updateAvailability, getPopularCars, getRecommendedCars
+import {
+  createCar,
+  findCarById,
+  findCarByRegistrationNumber,
+  getAllCars,
+  updateCar,
+  softDeleteCar,
+  updateAvailability,
+  getPopularCars,
+  getRecommendedCars,
+  getOwnerCars
 } from "../repositories/carRepository.js";
 
+export const addCar = async (carData, ownerId) => {
+  if (user.role !== "admin" && user.role !== "owner") {
+    throw new Error("You are not allowed to edit cars.");
+  }
+  const existingCar = await findCarByRegistrationNumber(
+    carData.registrationNumber,
+  );
 
-export const addCar = async (
-    carData,
-    ownerId
-) => {
+  if (existingCar) {
+    throw new Error("Car with this registration number already exists.");
+  }
 
-    const existingCar =
-        await findCarByRegistrationNumber(
-            carData.registrationNumber
-        );
+  if (carData.pricePerDay <= 0 || carData.mileage < 0) {
+    throw new Error("No -ve fields allowed.");
+  }
 
-    if (existingCar) {
+  carData.owner = ownerId;
 
-        throw new Error(
-            "Car with this registration number already exists."
-        );
-
-    }
-
-    if (carData.pricePerDay <= 0||carData.mileage < 0) {
-
-    throw new Error(
-        "No -ve fields allowed."
-    );
-
-    }
-
-    carData.owner = ownerId;
-
-    return await createCar(
-        carData
-    );
-
+  return await createCar(carData);
 };
 
+export const getCars = async (query) => {
+  //for all users
+  const filters = { isActive: true };
 
+  if (query.brand) {
+    filters.brand = {
+      $regex: query.brand, //each letter will be give result
+      $options: "i",
+    };
+  }
 
-export const getCars = async ( query ) => {
+  if (query.model) {
+    filters.model = {
+      $regex: query.model,
+      $options: "i",
+    };
+  }
 
-    const filters = { isActive: true};
+  if (query.location) {
+    filters.location = {
+      $regex: query.location,
+      $options: "i",
+    };
+  }
 
-    if (query.brand) {
-        filters.brand = {
-            $regex: query.brand, //each letter will be give result
-            $options: "i"
-        };
+  if (query.category) {
+    filters.category = query.category;
+  }
 
-    }
+  if (query.fuelType) {
+    filters.fuelType = query.fuelType;
+  }
 
-    if (query.model) {
+  if (query.transmission) {
+    filters.transmission = query.transmission;
+  }
 
-        filters.model = {
-            $regex: query.model,
-            $options: "i"
-        };
+  if (query.isAvailable) {
+    filters.isAvailable = query.isAvailable === "true";
+  }
 
-    }
-
-    if (query.location) {
-
-        filters.location = {
-            $regex: query.location,
-            $options: "i"
-        };
-
-    }
-
-    if (query.category) {
-
-        filters.category = query.category;
-
-    }
-
-    if (query.fuelType) {
-
-        filters.fuelType = query.fuelType;
-
-    }
-
-    if (query.transmission) {
-
-        filters.transmission = query.transmission;
-
-    }
-
-    if (query.isAvailable) {
-
-        filters.isAvailable =query.isAvailable ==="true";
-
-    }
-
-    return await getAllCars(
-        filters
-)
-
+  return await getAllCars(filters);
 };
 
+export const getCar = async (carId) => {
+  const car = await findCarById(carId);
 
+  if (!car || !car.isActive) {
+    throw new Error("Car not found.");
+  }
 
-export const getCar = async (
-    carId
-) => {
-
-    const car =
-        await findCarById(
-            carId
-        );
-
-    if (!car || !car.isActive) {
-
-        throw new Error(
-            "Car not found."
-        );
-
-    }
-
-    return car;
-
+  return car;
 };
 
+export const editCar = async (carId, updatedData, user) => {
+  delete updatedData.owner;
+  delete updatedData.registrationNumber; //restriction on updation
 
+  const car = await findCarById(carId);
 
-export const editCar = async (
-    carId,
-    updatedData
-) => {
+  if (!car) {
+    throw new Error("Car not found.");
+  }
 
-    delete updatedData.owner;
-    delete updatedData.registrationNumber; //restriction on updation
+  // Only owner and admin can edit
+  if (user.role !== "admin" && user.role !== "owner") {
+    throw new Error("You are not allowed to edit cars.");
+  }
 
-    const updatedCar =
-        await updateCar(
-            carId,
-            updatedData
-        );
+  // Owner can edit only their own cars
+  if (user.role === "owner" && car.owner.toString() !== user.id) {
+    throw new Error("You can only edit your own cars.");
+  }
 
-    if (!updatedCar) {
-
-        throw new Error(
-            "Car not found."
-        );
-
-    }
-
-    return updatedCar;
-
+  return await updateCar(carId, updatedData);
 };
 
+export const deleteCar = async (carId, user) => {
+  const car = await findCarById(carId);
+  if (!car) {
+    throw new Error("Car not found.");
 
-
-export const deleteCar = async (
-    carId
-) => {
-
-    const deletedCar =
-        await softDeleteCar(
-            carId
-        );
-
-    if (!deletedCar) {
-
-        throw new Error(
-            "Car not found."
-        );
-
+    if (user.role !== "admin" && user.role !== "owner") {
+      throw new Error("You are not allowed to edit cars.");
     }
+  }
+  if (user.role === "owner" && car.owner.toString() !== user.id) {
+    throw new Error("You can delete only your own cars.");
+  }
 
+  await softDeleteCar(carId);
 };
 
+export const changeAvailability = async (carId, isAvailable, user) => {
+  const car = await findCarById(carId);
 
+  if (!car) {
+    throw new Error("Car not found.");
+  }
+  if (user.role !== "admin" && user.role !== "owner") {
+    throw new Error("You are not allowed to edit cars.");
+  }
 
-export const changeAvailability = async (
-    carId,
-    isAvailable
-) => {
+  if (user.role === "owner" && car.owner.toString() !== user.id) {
+    throw new Error("You can update only your own cars.");
+  }
 
-    const updatedCar =
-        await updateAvailability(
-            carId,
-            isAvailable
-        );
-
-    if (!updatedCar) {
-
-        throw new Error(
-            "Car not found."
-        );
-
-    }
-
-    return updatedCar;
-
+  return await updateAvailability(carId, isAvailable);
 };
 
 export const fetchPopularCars = async () => {
-
-    return await getPopularCars();
-
+  return await getPopularCars();
 };
 
 export const fetchRecommendedCars = async () => {
+  return await getRecommendedCars();
+};
 
-    return await getRecommendedCars();
+export const ownerCars = async (user) => {  //owner(admin,lender) access to to get cars
+  if (user.role === "admin") {
+    return await getAllCars({
+      isActive: true,
+    });
+  }
 
+  if (user.role === "owner") {
+    return await getOwnerCars(user.id);
+  }
+
+  throw new Error("Access denied.");
 };

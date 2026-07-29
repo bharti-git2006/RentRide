@@ -72,18 +72,18 @@ const carSchema = new mongoose.Schema(
       required: true,
     },
 
-    images: [
+    image: [
       {
         type: String,
       },
     ],
 
-    isAvailable: {
+    isAvailable: {  //availability for booking
       type: Boolean,
       default: true,
     },
 
-    isActive: {
+    isActive: {   //soft delete
       type: Boolean,
       default: true,
     },
@@ -91,6 +91,7 @@ const carSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true
     },
 
     bookingCount: {
@@ -101,8 +102,7 @@ const carSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
-console.log("Loaded Car Schema v2");
+console.log("CarSchema new version")
 const Car = mongoose.model("Car", carSchema);
 
 export default Car;

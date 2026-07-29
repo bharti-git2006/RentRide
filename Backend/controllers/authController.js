@@ -1,8 +1,6 @@
 import {
     signup,
-    login,
-    applyForOwner,
-    approveOwner
+    login
 } from "../services/authService.js";
 
 export const signupUser = async (req, res) => {
