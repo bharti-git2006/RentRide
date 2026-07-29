@@ -4,12 +4,10 @@ import {
   findUserBookings,
   updateBooking,
   findActiveBooking,
-  createTrip,
   getOwnerBookings,
   getOwnerRevenueBookings,
 } from "../repositories/bookingRepository.js";
 
-import Trip from "../models/Trip.js";
 
 import {
   findCarById,
@@ -65,21 +63,6 @@ export const bookCar = async (bookingData, customerId) => {
   car.bookingCount = car.bookingCount+ 1;
   await car.save();
 
-  const trip = await createTrip({
-    booking: booking._id,
-    customer: booking.customer,
-    owner: car.owner,
-    car: booking.car,
-    pickupLocation: booking.pickupLocation,
-    dropLocation: booking.dropLocation,
-    route: [],
-    currentIndex: 0,
-    status: "Pending",
-  });
-  // Link Trip to Booking (only if you added trip field in Booking model)
-  booking.trip = trip._id;
-  await booking.save();
-
   return booking;
 };
 
@@ -114,57 +97,10 @@ export const cancelBooking = async (bookingId) => {
 
   await updateAvailability(booking.car._id, true);
 
-  await Trip.findOneAndUpdate(
-    {
-      booking: booking._id,
-    },
-    {
-      status: "Cancelled",
-      isSimulationRunning: false, //cancelling the trip
-    },
-  );
 
   return updatedBooking;
 };
 
-// export const confirmBooking = async (bookingId) => {
-//   const booking = await findBookingById(bookingId);
-
-//   if (!booking) {
-//     throw new Error("Booking not found.");
-//   }
-
-//   if (booking.bookingStatus !== "Pending") {
-//     throw new Error("Only pending bookings can be confirmed.");
-//   }
-
-// // Increase booking count
-// booking.car.bookingCount += 1;
-// await booking.car.save();
-
-//   // Update booking status
-//   const updatedBooking = await updateBooking(bookingId, {
-//     bookingStatus: "Confirmed",
-//   });
-
-//   // Create Trip
-//   const trip = await createTrip({
-//     booking: updatedBooking._id,
-//     customer: updatedBooking.customer,
-//     owner: booking.car.owner,
-//     car: updatedBooking.car._id,
-//     pickupLocation: updatedBooking.pickupLocation,
-//     dropLocation: updatedBooking.dropLocation,
-//     route: [],
-//     currentIndex: 0,
-//     status: "Pending",
-//   });
-//   // Link Trip to Booking (only if you added trip field in Booking model)
-//   updatedBooking.trip = trip._id;
-//   await updatedBooking.save();
-
-//   return updatedBooking;
-// };
 
 export const completeBooking = async (bookingId) => {
   const booking = await findBookingById(bookingId);

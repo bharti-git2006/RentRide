@@ -11,7 +11,7 @@ const router = express.Router();
 //customer routes
 router.get("/", getAllCars);
 router.get("/popular",popularCars);
-router.get("/recommended",authMiddleware,recommendedCars);
+router.get("/recommended",recommendedCars);
 router.get("/pending",authMiddleware,adminMiddleware,pendingCarRequests);
 
 router.get("/:id",  getCarById);

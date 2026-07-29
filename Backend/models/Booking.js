@@ -59,11 +59,6 @@ const bookingSchema = new mongoose.Schema(
       enum: ["Pending", "Paid"],
       default: "Pending",
     },
-    trip: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Trip",
-      default: null,
-    },
     coupon:{
       type:String,
       enum:["none","code15"],

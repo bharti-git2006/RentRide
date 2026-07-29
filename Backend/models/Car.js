@@ -109,7 +109,6 @@ const carSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-console.log("CarSchema new version");
 const Car = mongoose.model("Car", carSchema);
 
 export default Car;
