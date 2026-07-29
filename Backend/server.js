@@ -10,6 +10,8 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import carRoutes from "./routes/carRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+
 
 dotenv.config();
 
@@ -22,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/ai", aiRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {

@@ -18,7 +18,7 @@ export const findBookingById = async (bookingId) => {
     )
     .populate(
         "car",
-        "brand model images pricePerDay location bookingCount"
+        "brand model image pricePerDay location bookingCount"
     );
 };
 

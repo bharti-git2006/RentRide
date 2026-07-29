@@ -9,7 +9,7 @@ export const createCar = async (req, res) => {
 
         if (req.files && req.files.length > 0) {
 
-            carData.images = req.files.map(
+            carData.image = req.files.map(
                 (file) => file.path
             );
 
@@ -99,7 +99,7 @@ export const updateCar = async (req, res) => {
 
         if (req.files && req.files.length > 0) {
 
-            updatedData.images = req.files.map(
+            updatedData.image = req.files.map(
                 (file) => file.path
             );
 

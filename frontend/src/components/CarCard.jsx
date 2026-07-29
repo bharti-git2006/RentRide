@@ -53,7 +53,7 @@ const CarCard = ({ car }) => {
 
           <div>
             <span className="text-2xl font-bold text-primary">
-              ${car.pricePerDay}
+              ₹{car.pricePerDay}
             </span>
             <span className="text-sm text-base-content/60">
               {" "}

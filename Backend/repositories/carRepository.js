@@ -95,7 +95,7 @@ export const updateAvailability = async (
 export const getPopularCars = async () => {
     return await Car.find({
         isActive: true
-    }).sort({ bookingCount: -1}).limit(3).populate("owner", "name");
+    }).sort({ bookingCount: -1}).limit(6).populate("owner", "name");
 
 };
 

@@ -16,9 +16,9 @@ router.get("/:id",  getCarById);
 
 
 // Admin Routes
-router.post(  "/",  authMiddleware,  adminMiddleware,  uploadMiddleware.array("images", 3),  createCar);
+router.post(  "/",  authMiddleware,  adminMiddleware,  uploadMiddleware.array("image", 3),  createCar);
 
-router.put("/:id",  authMiddleware,  adminMiddleware,  uploadMiddleware.array("images", 3),  updateCar );
+router.put("/:id",  authMiddleware,  adminMiddleware,  uploadMiddleware.array("image", 3),  updateCar );
 
 router.delete("/:id",  authMiddleware,  adminMiddleware,  removeCar );
 
