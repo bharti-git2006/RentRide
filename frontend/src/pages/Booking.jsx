@@ -46,6 +46,7 @@ const Booking = () => {
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [pickupLocation, setPickupLocation] = useState("");
+  const [dropLocation, setDropLocation] = useState(""); // Added dropLocation state
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -53,6 +54,7 @@ const Booking = () => {
         const data = await request("GET", `/cars/${id}`);
         setCar(data);
         setPickupLocation(data.location);
+        setDropLocation(data.location); // Default drop location to pickup location
       } catch {
         toast.error("Failed to load car.");
       } finally {
@@ -81,7 +83,7 @@ const Booking = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!pickupDate || !returnDate || !pickupLocation) {
+    if (!pickupDate || !returnDate || !pickupLocation || !dropLocation) {
       return toast.error("Please fill all fields.");
     }
 
@@ -89,15 +91,31 @@ const Booking = () => {
       return toast.error("Return date must be after pickup date.");
     }
 
+    // Safely extract the owner ID
+    const ownerId = car?.owner?._id || car?.owner;
+
+    // Failsafe: Prevent submission if the car has no owner attached
+    if (!ownerId) {
+      console.error("Car object is missing owner data:", car);
+      return toast.error("Error: Car owner details are missing from the database.");
+    }
+
     setSubmitting(true);
 
     try {
-      const data = await request("POST", "/bookings", {
+      const payload = {
         car: id,
         pickupDate,
         returnDate,
         pickupLocation,
-      });
+        dropLocation,
+        owner: ownerId, 
+      };
+
+      // DEBUG: Check your browser console to verify this payload has a valid 'owner' string
+      console.log("Sending booking payload:", payload); 
+
+      const data = await request("POST", "/bookings", payload);
 
       setBooking(data);
       toast.success("Booking Confirmed!");
@@ -166,9 +184,16 @@ const Booking = () => {
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-base-300">
                 <span className="text-base-content/70 flex items-center gap-2">
-                  <MapPin size={16} /> Location
+                  <MapPin size={16} /> Pickup Location
                 </span>
                 <span className="font-semibold truncate max-w-[150px]">{booking.pickupLocation}</span>
+              </div>
+              {/* Added Drop Location to Summary */}
+              <div className="flex justify-between items-center pb-2 border-b border-base-300">
+                <span className="text-base-content/70 flex items-center gap-2">
+                  <MapPin size={16} /> Drop Location
+                </span>
+                <span className="font-semibold truncate max-w-[150px]">{booking.dropLocation}</span>
               </div>
               <div className="flex justify-between items-center pt-2">
                 <span className="text-lg font-bold">Total Paid</span>
@@ -248,20 +273,38 @@ const Booking = () => {
                 </label>
               </div>
 
-              <label className="form-control w-full">
-                <div className="label">
-                  <span className="label-text font-medium flex items-center gap-2">
-                    <MapPin size={16} className="text-base-content/50" /> Pickup Location
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Enter pickup address or airport"
-                  className="input input-bordered w-full focus:input-primary transition-colors"
-                  value={pickupLocation}
-                  onChange={(e) => setPickupLocation(e.target.value)}
-                />
-              </label>
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text font-medium flex items-center gap-2">
+                      <MapPin size={16} className="text-base-content/50" /> Pickup Location
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter pickup address or airport"
+                    className="input input-bordered w-full focus:input-primary transition-colors"
+                    value={pickupLocation}
+                    onChange={(e) => setPickupLocation(e.target.value)}
+                  />
+                </label>
+
+                {/* Added Drop Location Field */}
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text font-medium flex items-center gap-2">
+                      <MapPin size={16} className="text-base-content/50" /> Drop Location
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter drop-off address"
+                    className="input input-bordered w-full focus:input-primary transition-colors"
+                    value={dropLocation}
+                    onChange={(e) => setDropLocation(e.target.value)}
+                  />
+                </label>
+              </div>
 
               <div className="divider my-2"></div>
 

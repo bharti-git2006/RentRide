@@ -1,10 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import ProtectedRoute from "./components/ProtectedRoute";
+// Layouts
+import MainLayout from "./components/MainLayout";
+import AdminLayout from "./components/admin/AdminLayout";
 
+// Route Guards
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
+
+// Pages
 import Home from "./pages/Home";
 import Cars from "./pages/Cars";
 import CarDetails from "./pages/CarDetails";
@@ -14,68 +19,44 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import PublicRoute from "./components/PublicRoute";
+
+// Components
+import AdminDashboard from "./components/admin/AdminDashboard";
+import ManageCars from "./components/admin/ManageCars";
+import ManageUsers from "./components/admin/ManageUsers";
+import ManageBookings from "./components/admin/ManageBookings";
+
 
 const App = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-
+    <>
       <Toaster position="top-center" />
 
-      <Navbar />
-
-      <main className="flex-1">
-
-        <Routes>
-
+      <Routes>
+        {/* Public & User Routes */}
+        <Route element={<MainLayout />}>
           <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
-
-          <Route path="/cars" element={<PublicRoute><Cars/></PublicRoute>} />
-
+          <Route path="/cars" element={<PublicRoute><Cars /></PublicRoute>} />
           <Route path="/cars/:id" element={<PublicRoute><CarDetails /></PublicRoute>} />
-
-          <Route
-            path="/booking/:id"
-            element={
-              <ProtectedRoute>
-                <Booking />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/bookings"
-            element={
-              <ProtectedRoute>
-                <BookingHistory />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-
-          
-
-          <Route path="/login" element={<PublicRoute> <Login/> </PublicRoute>} />
-
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-
+          
+          <Route path="/booking/:id" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
+          <Route path="/bookings" element={<ProtectedRoute><BookingHistory /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          
           <Route path="*" element={<PublicRoute><NotFound /></PublicRoute>} />
+        </Route>
 
-        </Routes>
-
-      </main>
-
-      <Footer />
-
-    </div>
+       {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<ManageUsers />} />
+          <Route path="cars" element={<ManageCars />} />
+          <Route path="bookings" element={<ManageBookings />} />
+        </Route>
+      </Routes>
+    </>
   );
 };
 

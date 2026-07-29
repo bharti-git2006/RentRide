@@ -62,9 +62,9 @@ const carSchema = new mongoose.Schema(
       default: "",
     },
 
-    rating:{
+    rating: {
       type: Number,
-      default: 3
+      default: 3,
     },
 
     location: {
@@ -79,11 +79,13 @@ const carSchema = new mongoose.Schema(
     ],
 
     isAvailable: {
+      //availability for booking
       type: Boolean,
       default: true,
     },
 
     isActive: {
+      //soft delete
       type: Boolean,
       default: true,
     },
@@ -91,18 +93,23 @@ const carSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+
+    approvalStatus: { //approval for car operation
+      type: String,
+      enum: ["none","Pending", "Approved", "Rejected"],
+      default: "none",
     },
 
     bookingCount: {
-    type: Number,
-    default: 0,
+      type: Number,
+      default: 0,
     },
-    
   },
   { timestamps: true },
 );
-
-console.log("Loaded Car Schema v2");
+console.log("CarSchema new version");
 const Car = mongoose.model("Car", carSchema);
 
 export default Car;

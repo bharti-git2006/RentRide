@@ -3,8 +3,6 @@ import bcrypt from "bcrypt";
 import {
     createUser,
     findUserByEmail,
-    updateOwnerStatus,
-    updateUserRole
 } from "../repositories/userRepository.js";
 
 import generateToken from "../utils/generateToken.js";
@@ -54,32 +52,6 @@ export const login = async (email, password) => {
         token,
         role: user.role,
         name:user.name
-    };
-};
-
-export const applyForOwner = async (userId) => {
-    const updatedUser = await updateOwnerStatus(userId, "pending");
-
-    if (!updatedUser) {
-        throw new Error("User not found");
-    }
-
-    return {
-        message: "Owner request submitted successfully"
-    };
-};
-
-export const approveOwner = async (userId) => {
-    const user = await updateOwnerStatus(userId, "approved");
-
-    if (!user) {
-        throw new Error("User not found");
-    }
-
-    await updateUserRole(userId, "owner");
-
-    return {
-        message: "Owner request approved"
     };
 };
 

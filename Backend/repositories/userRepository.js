@@ -25,24 +25,8 @@ export const updateUser = async (id, updatedData) => {
             runValidators: true
         }
     ).select("-password");
-};
+}
 
-export const updateUserRole = async (id, role) => {
-    return await User.findByIdAndUpdate(
-        id,
-        { role },
-        { new: true }
-    ).select("-password");
-};
-
-export const updateOwnerStatus = async (id, ownerStatus) => {
-    return await User.findByIdAndUpdate(
-        id,
-        { ownerStatus },
-        { new: true }
-    ).select("-password");
-};
-
-export const getAllUsers = async () => {
+export const getusers = async () => {
     return await User.find().select("-password");
-};
+}
