@@ -27,7 +27,7 @@ export const createCar = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Car added successfully",
-      car
+      data: car
     });
 
   } catch (error) {
@@ -49,7 +49,7 @@ export const getAllCars = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      cars
+      data:cars
     });
 
   } catch (error) {
@@ -73,7 +73,7 @@ export const getCarById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      car
+      data:car
     });
 
   } catch (error) {
@@ -108,7 +108,7 @@ export const updateCar = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Car updated successfully",
-      car
+      data: car
     });
 
 
@@ -178,7 +178,7 @@ export const updateAvailabilityStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Availability updated",
-      car
+      data: car
     });
 
 
@@ -202,7 +202,7 @@ export const popularCars = async (req,res)=>{
 
     res.status(200).json({
       success:true,
-      cars
+      data:cars
     });
 
   }catch(error){
@@ -225,7 +225,7 @@ export const recommendedCars = async(req,res)=>{
 
     res.status(200).json({
       success:true,
-      cars
+      data: cars
     });
 
   }catch(error){
@@ -245,14 +245,10 @@ export const getOwnerCars = async(req,res)=>{
   try{
 
     const user = req.user;
-
-
     const cars = await ownerCars(user);
-
-
     res.status(200).json({
       success:true,
-      cars
+      data: cars
     });
 
 

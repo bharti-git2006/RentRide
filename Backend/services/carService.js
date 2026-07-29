@@ -1,17 +1,7 @@
-import {
-  createCar,
-  findCarById,
-  findCarByRegistrationNumber,
-  getAllCars,
-  updateCar,
-  softDeleteCar,
-  updateAvailability,
-  getPopularCars,
-  getRecommendedCars,
-  getOwnerCars
-} from "../repositories/carRepository.js";
+import {  createCar,  findCarById,  findCarByRegistrationNumber,  getAllCars,  updateCar,  softDeleteCar,  updateAvailability,  getPopularCars,  getRecommendedCars,  getOwnerCars } from "../repositories/carRepository.js";
 
 export const addCar = async (carData, ownerId) => {
+
   if (user.role !== "admin" && user.role !== "owner") {
     throw new Error("You are not allowed to edit cars.");
   }

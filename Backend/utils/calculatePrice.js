@@ -12,7 +12,7 @@ export const calculatePrice = (pickupDate, returnDate, pricePerDay, coupon) => {
   if (coupon) {
     return {
       totalDays,
-      totalPrice: (basePrice * 0.7) + 15, // 30% discount + service charge
+      totalPrice: (basePrice * 0.85) + 15, // 15% discount + service charge
     };
   }
 

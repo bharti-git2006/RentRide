@@ -32,11 +32,9 @@ export const updateCar = async (carId, updatedData) => {
 export const softDeleteCar = async (carId) => {
   return await Car.findByIdAndUpdate(
     carId,
-
     {
       isActive: false,
     },
-
     {
       new: true,
       runValidators: true,

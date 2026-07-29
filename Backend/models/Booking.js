@@ -66,8 +66,8 @@ const bookingSchema = new mongoose.Schema(
     },
     coupon:{
       type:String,
-      enum:["code30"],
-      default:""
+      enum:["none","code15"],
+      default:"none"
     }
   },
 
