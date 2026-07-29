@@ -10,7 +10,6 @@ import Car from "../models/Car.js";
 
 import { cars } from "./cars.js";
 
-await Car.insertMany(cars);
 
 const seedAdmin = async () => {
   try {

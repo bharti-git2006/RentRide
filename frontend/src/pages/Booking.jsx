@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
+import { 
+  CalendarDays, 
+  MapPin, 
+  CarFront, 
+  CheckCircle, 
+  ArrowLeft, 
+  Receipt 
+} from "lucide-react";
 
 const BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -45,7 +53,7 @@ const Booking = () => {
         const data = await request("GET", `/cars/${id}`);
         setCar(data);
         setPickupLocation(data.location);
-      } catch{
+      } catch {
         toast.error("Failed to load car.");
       } finally {
         setLoading(false);
@@ -53,7 +61,7 @@ const Booking = () => {
     };
 
     fetchCar();
-  }, []);
+  }, [id]);
 
   const days =
     pickupDate && returnDate
@@ -100,190 +108,247 @@ const Booking = () => {
     }
   };
 
+  // --- Loading State ---
   if (loading) {
     return (
-      <div className="text-center mt-20">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
+  // --- Not Found State ---
   if (!car) {
     return (
-      <div className="text-center mt-20">
-        <h2 className="text-3xl font-bold">Car Not Found</h2>
-
-        <Link to="/cars" className="btn btn-primary mt-5">
-          Browse Cars
-        </Link>
+      <div className="flex justify-center items-center min-h-[60vh] px-4">
+        <div className="card bg-base-100 shadow-xl max-w-md w-full text-center">
+          <div className="card-body items-center">
+            <CarFront className="w-16 h-16 text-base-content/30 mb-4" />
+            <h2 className="card-title text-2xl font-bold">Car Not Found</h2>
+            <p className="text-base-content/70">The vehicle you are trying to book is unavailable or doesn't exist.</p>
+            <div className="card-actions mt-4">
+              <Link to="/cars" className="btn btn-primary">
+                Browse Available Cars
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
+  // --- Success State ---
   if (booking) {
     return (
-      <div className="max-w-xl mx-auto mt-20 text-center">
+      <div className="max-w-md mx-auto mt-12 px-4 mb-20">
+        <div className="card bg-base-100 shadow-xl border border-base-200">
+          <div className="card-body items-center text-center">
+            <CheckCircle className="w-20 h-20 text-success mb-2" />
+            <h1 className="text-3xl font-black text-base-content">
+              Booking Confirmed!
+            </h1>
+            <p className="text-base-content/70 mt-2">
+              Your <span className="font-bold text-base-content">{car.brand} {car.model}</span> is ready for you.
+            </p>
 
-        <h1 className="text-4xl font-bold text-success">
-          Booking Successful 🎉
-        </h1>
+            <div className="bg-base-200 rounded-box w-full p-4 mt-6 text-left space-y-3">
+              <div className="flex justify-between items-center pb-2 border-b border-base-300">
+                <span className="text-base-content/70 flex items-center gap-2">
+                  <CalendarDays size={16} /> Pickup
+                </span>
+                <span className="font-semibold">{new Date(booking.pickupDate).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-base-300">
+                <span className="text-base-content/70 flex items-center gap-2">
+                  <CalendarDays size={16} /> Return
+                </span>
+                <span className="font-semibold">{new Date(booking.returnDate).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-base-300">
+                <span className="text-base-content/70 flex items-center gap-2">
+                  <MapPin size={16} /> Location
+                </span>
+                <span className="font-semibold truncate max-w-[150px]">{booking.pickupLocation}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2">
+                <span className="text-lg font-bold">Total Paid</span>
+                <span className="text-xl font-black text-primary">${booking.totalPrice}</span>
+              </div>
+            </div>
 
-        <p className="mt-4">
-          Your <strong>{car.brand} {car.model}</strong> has been booked.
-        </p>
-
-        <div className="card bg-base-100 mt-8 p-5 text-left">
-
-          <p>
-            <strong>Pickup:</strong>{" "}
-            {new Date(booking.pickupDate).toLocaleDateString()}
-          </p>
-
-          <p>
-            <strong>Return:</strong>{" "}
-            {new Date(booking.returnDate).toLocaleDateString()}
-          </p>
-
-          <p>
-            <strong>Location:</strong> {booking.pickupLocation}
-          </p>
-
-          <p className="text-xl font-bold mt-4">
-            Total Paid: ${booking.totalPrice}
-          </p>
-
+            <div className="card-actions w-full mt-6">
+              <Link to="/bookings" className="btn btn-primary w-full">
+                View My Bookings
+              </Link>
+              <Link to="/" className="btn btn-ghost w-full">
+                Back to Home
+              </Link>
+            </div>
+          </div>
         </div>
-
-        <Link to="/bookings" className="btn btn-primary mt-6">
-          View My Bookings
-        </Link>
-
       </div>
     );
   }
 
+  // --- Main Booking Form ---
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 mb-20">
+      
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <button onClick={() => window.history.back()} className="btn btn-circle btn-ghost btn-sm">
+          <ArrowLeft size={20} />
+        </button>
+        <div>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tight">
+            Checkout
+          </h1>
+          <p className="text-base-content/70 text-sm mt-1">Complete your booking details below.</p>
+        </div>
+      </div>
 
-      <h1 className="text-3xl font-bold mb-8">
-        Book {car.brand} {car.model}
-      </h1>
+      <div className="grid lg:grid-cols-5 gap-8 items-start">
+        
+        {/* Left Col: Booking Form */}
+        <div className="lg:col-span-3 card bg-base-100 shadow-xl border border-base-200">
+          <div className="card-body">
+            <h2 className="card-title text-xl mb-4">Trip Details</h2>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text font-medium flex items-center gap-2">
+                      <CalendarDays size={16} className="text-base-content/50"/> Pickup Date
+                    </span>
+                  </div>
+                  <input
+                    type="date"
+                    className="input input-bordered w-full focus:input-primary transition-colors"
+                    min={new Date().toISOString().split("T")[0]}
+                    value={pickupDate}
+                    onChange={(e) => setPickupDate(e.target.value)}
+                  />
+                </label>
 
-      <div className="grid md:grid-cols-2 gap-8">
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text font-medium flex items-center gap-2">
+                      <CalendarDays size={16} className="text-base-content/50"/> Return Date
+                    </span>
+                  </div>
+                  <input
+                    type="date"
+                    className="input input-bordered w-full focus:input-primary transition-colors"
+                    min={pickupDate || new Date().toISOString().split("T")[0]}
+                    value={returnDate}
+                    onChange={(e) => setReturnDate(e.target.value)}
+                  />
+                </label>
+              </div>
 
-        {/* Booking Form */}
+              <label className="form-control w-full">
+                <div className="label">
+                  <span className="label-text font-medium flex items-center gap-2">
+                    <MapPin size={16} className="text-base-content/50" /> Pickup Location
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Enter pickup address or airport"
+                  className="input input-bordered w-full focus:input-primary transition-colors"
+                  value={pickupLocation}
+                  onChange={(e) => setPickupLocation(e.target.value)}
+                />
+              </label>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="divider my-2"></div>
 
-          <div>
-            <label className="label">
-              <span className="label-text">Pickup Date</span>
-            </label>
-
-            <input
-              type="date"
-              className="input input-bordered w-full"
-              min={new Date().toISOString().split("T")[0]}
-              value={pickupDate}
-              onChange={(e) => setPickupDate(e.target.value)}
-            />
+              <button
+                type="submit"
+                className="btn btn-primary w-full text-lg"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  <CheckCircle size={20} />
+                )}
+                {submitting ? "Confirming..." : "Confirm Booking"}
+              </button>
+            </form>
           </div>
+        </div>
 
-          <div>
-            <label className="label">
-              <span className="label-text">Return Date</span>
-            </label>
-
-            <input
-              type="date"
-              className="input input-bordered w-full"
-              min={pickupDate || new Date().toISOString().split("T")[0]}
-              value={returnDate}
-              onChange={(e) => setReturnDate(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="label">
-              <span className="label-text">Pickup Location</span>
-            </label>
-
-            <input
-              type="text"
-              className="input input-bordered w-full"
-              value={pickupLocation}
-              onChange={(e) => setPickupLocation(e.target.value)}
-            />
-          </div>
-
-          <button
-            className="btn btn-primary w-full"
-            disabled={submitting}
-          >
-            {submitting ? "Booking..." : "Confirm Booking"}
-          </button>
-
-        </form>
-
-        {/* Booking Summary */}
-
-        <div className="card bg-base-200 p-6">
-
-          <img
-            src={car.image?.[0]}
-            alt={car.model}
-            className="rounded-lg h-52 object-cover"
-          />
-
-          <h2 className="text-2xl font-bold mt-4">
-            {car.brand} {car.model}
-          </h2>
-
-          <p className="mt-2">
-            {car.category}
-          </p>
-
-          <p>
-            {car.location}
-          </p>
-
-          <div className="divider"></div>
-
-          <div className="space-y-2">
-
-            <div className="flex justify-between">
-              <span>Price / Day</span>
-              <span>${car.pricePerDay}</span>
+        {/* Right Col: Booking Summary */}
+        <div className="lg:col-span-2 card bg-base-100 shadow-xl border border-base-200 overflow-hidden sticky top-24">
+          <figure className="h-52 bg-base-200">
+            {car.image?.[0] ? (
+              <img
+                src={car.image[0]}
+                alt={car.model}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <CarFront className="w-20 h-20 text-base-content/20" />
+            )}
+          </figure>
+          
+          <div className="card-body">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="card-title text-2xl font-bold">
+                  {car.brand} {car.model}
+                </h2>
+                <span className="badge badge-primary badge-outline mt-2">{car.category}</span>
+              </div>
             </div>
 
-            <div className="flex justify-between">
-              <span>Days</span>
-              <span>{days}</span>
+            <div className="flex items-center gap-2 text-base-content/70 mt-4 text-sm">
+              <MapPin size={16} />
+              <span>{car.location}</span>
             </div>
 
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>${subtotal}</span>
-            </div>
+            <div className="divider mb-2"></div>
 
-            <div className="flex justify-between">
-              <span>Service Fee</span>
-              <span>${days > 0 ? serviceFee : 0}</span>
+            <h3 className="font-semibold flex items-center gap-2 mb-4">
+              <Receipt size={18} /> Price Breakdown
+            </h3>
+
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-base-content/70">Price per day</span>
+                <span className="font-medium">${car.pricePerDay}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-base-content/70">Duration</span>
+                <span className="font-medium">{days} {days === 1 ? 'day' : 'days'}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-base-content/70">Subtotal</span>
+                <span className="font-medium">${subtotal}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-base-content/70">Service Fee</span>
+                <span className="font-medium">${days > 0 ? serviceFee : 0}</span>
+              </div>
             </div>
 
             <div className="divider my-2"></div>
 
-            <div className="flex justify-between text-xl font-bold">
-              <span>Total</span>
-              <span>${total}</span>
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-bold">Total</span>
+              <span className="text-2xl font-black text-primary">${total}</span>
             </div>
 
           </div>
-
         </div>
 
       </div>
-
     </div>
   );
 };

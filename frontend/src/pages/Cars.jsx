@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 async function get(path, params) {
   const query = params
     ? `?${new URLSearchParams(
-        Object.fromEntries(Object.entries(params).filter(([, value]) => value)),
+        Object.fromEntries(Object.entries(params).filter(([, value]) => value))
       ).toString()}`
     : "";
 
@@ -61,51 +61,95 @@ const Cars = () => {
     setSearchParams(params);
   };
 
+  const clearFilters = () => {
+    setSearchParams({});
+  };
+
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Browse Cars</h1>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-base-content">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">
+          Browse Cars
+        </h1>
+        <p className="text-base-content/70">
+          Find and book the perfect vehicle for your next trip.
+        </p>
+      </div>
 
-      {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Location"
-          className="input input-bordered"
-          value={location}
-          onChange={(e) => updateFilter("location", e.target.value)}
-        />
+      {/* Filter Control Bar */}
+      <div className="bg-base-200/50 p-4 rounded-box mb-8 border border-base-300">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="form-control w-full sm:max-w-xs">
+            <input
+              type="text"
+              placeholder="📍 Enter location..."
+              className="input input-bordered w-full bg-base-100 focus:input-primary transition-colors"
+              value={location}
+              onChange={(e) => updateFilter("location", e.target.value)}
+            />
+          </div>
 
-        <select
-          className="select select-bordered"
-          value={category}
-          onChange={(e) => updateFilter("category", e.target.value)}
-        >
-          <option value="">All Types</option>
+          <div className="form-control w-full sm:max-w-xs">
+            <select
+              className="select select-bordered w-full bg-base-100 focus:select-primary transition-colors"
+              value={category}
+              onChange={(e) => updateFilter("category", e.target.value)}
+            >
+              <option value="">All Vehicle Types</option>
+              {types.map((carType) => (
+                <option key={carType} value={carType}>
+                  {carType}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {types.map((carType) => (
-            <option key={carType} value={carType}>
-              {carType}
-            </option>
-          ))}
-        </select>
+          {/* Optional: Clear filters button if filters are active */}
+          {(location || category) && (
+            <button 
+              onClick={clearFilters}
+              className="btn btn-ghost text-base-content/60 hover:text-base-content sm:ml-auto"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Map Prototype */}
-      <div className="mb-8">
+      <div className="mb-10 rounded-box overflow-hidden border border-base-300 shadow-sm z-0 relative">
         <Map cars={cars} />
       </div>
 
-      {/* Cars */}
-      {cars.length === 0 ? (
-        <p>No Cars Found</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cars.map((car) => (
-            <CarCard key={car._id} car={car} />
-          ))}
-        </div>
-      )}
-    </div>
+      {/* Cars Grid / Empty State */}
+      <div className="mb-12">
+        <h2 className="text-xl font-bold mb-6">
+          {cars.length} {cars.length === 1 ? "Vehicle" : "Vehicles"} Available
+        </h2>
+
+        {cars.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center bg-base-200/30 rounded-box border-2 border-base-300 border-dashed">
+            <div className="text-4xl mb-4 opacity-50">🚗</div>
+            <h3 className="text-xl font-bold mb-2">No cars found</h3>
+            <p className="text-base-content/60 max-w-md">
+              We couldn't find any vehicles matching your current search. Try adjusting your location or category filters.
+            </p>
+            {(location || category) && (
+              <button onClick={clearFilters} className="btn btn-primary mt-6">
+                Reset All Filters
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+            {cars.map((car) => (
+              <CarCard key={car._id} car={car} />
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
   );
 };
 
