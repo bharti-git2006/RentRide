@@ -8,6 +8,7 @@ import {
   LogOut 
 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import ThemeToggle from "./ThemeToggle"; // Make sure the path is correct
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -25,13 +26,13 @@ const Navbar = () => {
   const navLinks = (
     <>
       <li>
-        <NavLink to="/" className="{getNavLinkClass}" >Home</NavLink>
+        <NavLink to="/" className={getNavLinkClass}>Home</NavLink>
       </li>
       <li>
-        <NavLink to="/cars" className="{getNavLinkClass}">Cars</NavLink>
+        <NavLink to="/cars" className={getNavLinkClass}>Cars</NavLink>
       </li>
       <li>
-        <NavLink to="/bookings" className="{getNavLinkClass}">Bookings</NavLink>
+        <NavLink to="/bookings" className={getNavLinkClass}>Bookings</NavLink>
       </li>
       {user?.role === "admin" && (
         <li>
@@ -79,7 +80,11 @@ const Navbar = () => {
       </div>
 
       {/* Right */}
-      <div className="navbar-end gap-2">
+      <div className="navbar-end gap-2 md:gap-4">
+        
+        {/* Theme Toggle Button */}
+        <ThemeToggle />
+
         {user ? (
           <div className="dropdown dropdown-end">
             
