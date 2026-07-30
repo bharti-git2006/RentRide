@@ -183,7 +183,7 @@ const BookingHistory = () => {
                   <div className="text-left md:text-right">
                     <span className="text-xs text-base-content/60 font-semibold uppercase tracking-wider">Total Paid</span>
                     <h2 className="text-2xl font-black text-primary">
-                      ${booking.totalPrice}
+                      ₹{booking.totalPrice}
                     </h2>
                   </div>
 

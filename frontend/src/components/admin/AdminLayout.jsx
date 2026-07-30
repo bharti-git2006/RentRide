@@ -24,7 +24,6 @@ const AdminLayout = () => {
           <Link to="/admin" className="block py-2 px-4 rounded hover:bg-neutral-focus">Dashboard</Link>
           <Link to="/admin/users" className="block py-2 px-4 rounded hover:bg-neutral-focus">Manage Users</Link>
           <Link to="/admin/cars" className="block py-2 px-4 rounded hover:bg-neutral-focus">Manage Cars</Link>
-          <Link to="/admin/bookings" className="block py-2 px-4 rounded hover:bg-neutral-focus">Manage Bookings</Link>
         </nav>
       </aside>
 

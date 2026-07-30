@@ -362,7 +362,7 @@ const Booking = () => {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-base-content/70">Price per day</span>
-                <span className="font-medium">${car.pricePerDay}</span>
+                <span className="font-medium">₹{car.pricePerDay}</span>
               </div>
 
               <div className="flex justify-between">
@@ -372,7 +372,7 @@ const Booking = () => {
 
               <div className="flex justify-between">
                 <span className="text-base-content/70">Subtotal</span>
-                <span className="font-medium">${subtotal}</span>
+                <span className="font-medium">₹{subtotal}</span>
               </div>
 
               <div className="flex justify-between">
@@ -385,7 +385,7 @@ const Booking = () => {
 
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold">Total</span>
-              <span className="text-2xl font-black text-primary">${total}</span>
+              <span className="text-2xl font-black text-primary">₹{total}</span>
             </div>
 
           </div>

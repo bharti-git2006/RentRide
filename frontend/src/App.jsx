@@ -24,7 +24,6 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import ManageCars from "./components/admin/ManageCars";
 import ManageUsers from "./components/admin/ManageUsers";
-import ManageBookings from "./components/admin/ManageBookings";
 
 
 const App = () => {
@@ -54,7 +53,6 @@ const App = () => {
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<ManageUsers />} />
           <Route path="cars" element={<ManageCars />} />
-          <Route path="bookings" element={<ManageBookings />} />
         </Route>
       </Routes>
     </>

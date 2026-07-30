@@ -18,6 +18,11 @@ const bookingSchema = new mongoose.Schema(
       ref: "Car",
       required: true,
     },
+    trip: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trip",
+      required: true,
+    },
 
     pickupDate: {
       type: Date,

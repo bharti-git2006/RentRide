@@ -28,6 +28,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/ai", aiRoutes);
 
 
+
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
 
