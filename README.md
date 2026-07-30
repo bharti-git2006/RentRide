@@ -142,7 +142,7 @@ Features include:
 * AI chatbot interface.
 * Dashboard views for different user roles.
 * Leaflet-based map visualisation.
-* API integration using Axios.
+* API integration using Fetch.
 * Global state management with Zustand.
 
 ---
