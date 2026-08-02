@@ -50,7 +50,7 @@ const CarDetails = () => {
 
         // Fetch recommended cars
         const recommended = await get("/cars/recommended");
-        console.log(recommended);
+        
         setRecommendedCars(recommended);
       } catch (err) {
         console.log(err);

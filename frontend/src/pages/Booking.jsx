@@ -111,9 +111,7 @@ const Booking = () => {
         dropLocation,
         owner: ownerId, 
       };
-
-      // DEBUG: Check your browser console to verify this payload has a valid 'owner' string
-      console.log("Sending booking payload:", payload); 
+ 
 
       const data = await request("POST", "/bookings", payload);
 

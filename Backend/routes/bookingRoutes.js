@@ -21,7 +21,7 @@ router.put( "/:id",  authMiddleware,  updateBooking);
 
 router.put( "/:id/cancel",  authMiddleware,  removeBooking);
 
-router.put( "/:id/complete", authMiddleware, completedBookingStatus); //not sure about this
+router.put( "/:id/complete", authMiddleware, completedBookingStatus); 
 
  
 

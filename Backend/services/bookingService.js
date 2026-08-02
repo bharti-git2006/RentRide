@@ -58,21 +58,6 @@ export const bookCar = async (bookingData, customerId) => {
 
   await updateAvailability(bookingData.car, false);
 
-  // const trip = await createTrip({
-  //   booking: booking._id,
-  //   customer: booking.customer,
-  //   owner: car.owner,
-  //   car: booking.car,
-  //   pickupLocation: booking.pickupLocation,
-  //   dropLocation: booking.dropLocation,
-  //   route: [],
-  //   currentIndex: 0,
-  //   status: "Pending",
-  // });
-  // // Link Trip to Booking 
-  // booking.trip = trip._id;
-  // await booking.save();
-
   //increasing the bookingcount of car
   car.bookingCount = car.bookingCount+ 1;
   await car.save();
